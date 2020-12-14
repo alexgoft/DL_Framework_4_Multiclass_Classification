@@ -1,0 +1,12 @@
+
+
+data:
+  num_classes: 10
+  train_set_size: 5000 # Pairs
+  train_set_alpha: 0.5 # How much "image 1" overlays "image 2"
+  val_set_size: 10000 # Single examples
+
+train:
+  optimizer: 'adam'
+  learning_rate: 0.002
+  alpha:
