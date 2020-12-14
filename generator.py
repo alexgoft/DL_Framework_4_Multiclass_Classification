@@ -19,8 +19,8 @@ class DataGenerator(tf.keras.utils.Sequence):
         self.batch_size = config['train'].get('batch_size', 32)
 
         self.labels = labels
-        self.features = images
-        self.example_ids = np.arange(len(self.features))
+        self.images = images
+        self.example_ids = np.arange(len(self.images))
 
         self.n_classes = config['data'].get('num_classes', 9)
 
@@ -53,18 +53,33 @@ class DataGenerator(tf.keras.utils.Sequence):
         if self.shuffle == True:
             np.random.shuffle(self.indexes)
 
+    def _get_sample(self, idx):
+
+        images = self.images[idx]
+        labels = self.labels[idx]
+
+        return images, labels
+
     def __data_generation(self, list_IDs_temp):
         """Generates data containing batch_size samples"""  # X : (n_samples, *dim)
         # Initialization
-        X = np.empty((self.batch_size, *self.dim))
+        dim = self.images[0].shape[1:] if self.dim is None else self.dim
+
+        X = np.empty((self.batch_size, *dim))
         y = np.empty((self.batch_size, self.n_classes), dtype=int)
 
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
+
+            images, labels = self._get_sample(ID)
+
+            images = self.images[ID]
+            labels = self.labels[ID]
+
             # Store sample
-            X[i,] = self.features[ID]
+            X[i,] = images
 
             # Store class
-            y[i] = self.labels[ID]
+            y[i] = labels
 
         return X, y
