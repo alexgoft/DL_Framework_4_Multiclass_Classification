@@ -1,9 +1,8 @@
-import yaml
 import numpy as np
 import random
 
+from termcolor import colored
 from itertools import combinations
-from argparse import Namespace
 from tensorflow.keras.datasets import cifar10
 
 
@@ -32,7 +31,12 @@ def labels_to_one_hot(num_classes, labels):
     return np.array([np.eye(num_classes)[label] for label in labels])
 
 
-def get_data(config):
+def get_data(config, print_color='yellow'):
+
+    print(colored('###################################', print_color))
+    print(colored('######### GENERATING DATA #########', print_color))
+    print(colored('###################################', print_color))
+
     num_classes = config['data']['num_classes']
 
     train_examples_num = config['data']['train_set_size']
@@ -85,20 +89,11 @@ def get_data(config):
     # validation labels to one_hot
     val_y = labels_to_one_hot(num_classes=num_classes, labels=val_y_raw)
 
-    print('DATA SHAPES:')
-    print('\tTRAIN X', train_x.shape)
-    print('\tTRAIN Y', train_y.shape)
-    print('\tVAL X', val_x.shape)
-    print('\tVAL Y', val_y.shape)  # Val is a "two-hot-vector". It will be changed to a prob vector according to alpha.
+    print(colored('DATA SHAPES:', print_color))
+    print(colored(f'\tTRAIN X {train_x.shape}', print_color))
+    print(colored(f'\tTRAIN Y {train_y.shape}', print_color))
+    print(colored(f'\tVAL X {val_x.shape}', print_color))
+    print(colored(f'\tVAL Y {val_y.shape}', print_color))
 
     return train_x, train_y, val_x, val_y
 
-
-def test():
-    config = yaml.safe_load(open("config.yaml", 'r'))
-
-    train_x, train_y, val_x, val_y = get_data(config=config)
-
-
-if __name__ == '__main__':
-    test()

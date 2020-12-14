@@ -1,10 +1,5 @@
 import tensorflow as tf
 import numpy as np
-import os
-import shutil
-
-from random import randrange
-from data import create_tmp_data
 
 
 class DataGenerator(tf.keras.utils.Sequence):
@@ -12,22 +7,22 @@ class DataGenerator(tf.keras.utils.Sequence):
 
     def __init__(
             self,
-            features, labels,
-            dim,
-            batch_size=32,
-            n_classes=2,
-            shuffle=True
+            images, labels,
+            config,
+            shuffle=True,
     ):
 
         """Initialization"""
-        self.dim = dim
-        self.batch_size = batch_size
+        self.config = config
+
+        self.dim = config['train'].get('input_size', None)
+        self.batch_size = config['train'].get('batch_size', 32)
 
         self.labels = labels
-        self.features = features
+        self.features = images
         self.example_ids = np.arange(len(self.features))
 
-        self.n_classes = n_classes
+        self.n_classes = config['data'].get('num_classes', 9)
 
         self.shuffle = shuffle
 
@@ -73,5 +68,3 @@ class DataGenerator(tf.keras.utils.Sequence):
             y[i] = self.labels[ID]
 
         return X, y
-
-
