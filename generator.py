@@ -15,7 +15,7 @@ class DataGenerator(tf.keras.utils.Sequence):
         """Initialization"""
         self.config = config
 
-        self.dim = config['train'].get('input_size', None)
+        self.dim = config['model'].get('input_size', None)
         self.batch_size = config['train'].get('batch_size', 32)
 
         self.labels = labels
@@ -69,8 +69,13 @@ class DataGenerator(tf.keras.utils.Sequence):
 
     def __data_generation(self, list_IDs_temp):
         """Generates data containing batch_size samples"""  # X : (n_samples, *dim)
+
         # Initialization
-        dim = self.images[0].shape[1:] if self.dim is None else self.dim
+        if self.dim is None:
+            dim = self.images[0].shape
+            dim = dim if len(dim) == 3 else dim[1:]
+        else:
+            dim = self.dim
 
         images = np.empty((self.batch_size, *dim))
         labels = np.empty((self.batch_size, self.n_classes), dtype=int)
