@@ -6,6 +6,7 @@ from generator import DataGenerator
 
 
 def main():
+
     config = yaml.safe_load(open("config.yaml", 'r'))
 
     epochs = config['train']['epochs']
