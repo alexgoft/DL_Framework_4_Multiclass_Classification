@@ -55,31 +55,35 @@ class DataGenerator(tf.keras.utils.Sequence):
 
     def _get_sample(self, idx):
 
-        images = self.images[idx]
-        labels = self.labels[idx]
+        image = self.images[idx]
+        label = self.labels[idx]
 
-        return images, labels
+        if len(image.shape) == 4:
+
+            # If it's training examples, we shall combine both images to a single image.
+            # TODO Overlay, Median?
+            image = np.average(image, axis=0)
+            label /= 2
+
+        return image, label
 
     def __data_generation(self, list_IDs_temp):
         """Generates data containing batch_size samples"""  # X : (n_samples, *dim)
         # Initialization
         dim = self.images[0].shape[1:] if self.dim is None else self.dim
 
-        X = np.empty((self.batch_size, *dim))
-        y = np.empty((self.batch_size, self.n_classes), dtype=int)
+        images = np.empty((self.batch_size, *dim))
+        labels = np.empty((self.batch_size, self.n_classes), dtype=int)
 
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
 
-            images, labels = self._get_sample(ID)
-
-            images = self.images[ID]
-            labels = self.labels[ID]
+            image, label = self._get_sample(ID)
 
             # Store sample
-            X[i,] = images
+            images[i,] = image
 
             # Store class
-            y[i] = labels
+            labels[i] = label
 
-        return X, y
+        return images, labels
