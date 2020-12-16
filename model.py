@@ -139,7 +139,7 @@ class GoftNet:
 
             callbacks=callbacks,
 
-            verbose=0
+            verbose=1
         )
 
         return train_log
