@@ -36,6 +36,7 @@ class GoftNet:
         # Training parameters.
         self._optimizer = config['train']['optimizer']
         self._loss_function = config['train']['loss_function']
+        self._epochs = config['train']['epochs']
 
         # General
         self._output_dir = config['general']['output_dir']  # Here Tensorboard logs will be written.
@@ -69,7 +70,7 @@ class GoftNet:
 
         )
 
-    def _create_model(self, print_color='blue'):
+    def _create_model(self, print_color='yellow'):
 
         print(colored('###################################', print_color))
         print(colored('######### CREATING MODEL #########', print_color))
@@ -129,12 +130,16 @@ class GoftNet:
             TensorBoard(log_dir=log_dir)
         ]
 
-        # train_log = self._model.fit(x_train, y_train,
-        #                             epochs=self._EPOCHS,
-        #
-        #                             validation_data=(x_test, y_test),
-        #
-        #                             callbacks=callbacks,
-        #                             shuffle=True)
-        #
-        # return train_log
+        train_log = self._model.fit_generator(
+
+            generator=train_data,
+            validation_data=val_data,
+
+            epochs=self._epochs,
+
+            callbacks=callbacks,
+
+            verbose=0
+        )
+
+        return train_log
