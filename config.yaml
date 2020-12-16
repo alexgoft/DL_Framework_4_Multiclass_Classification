@@ -1,5 +1,3 @@
-
-
 data:
   num_classes: 10
   train_set_size: 5000 # Pairs
@@ -7,11 +5,26 @@ data:
   val_set_size: 10000 # Single examples
 
 model:
-  input_dim: (32,32,3)
+
+  input_dim: [32,32,3]
+
+  # Define Feature Extractor Blocks
+  num_features: [64, 64, 128, 256, 512, 512]
+  kernel_shapes: [3, 3, 3, 3, 3, 3]
+  num_conv_layers: [1, 1, 2, 3, 3, 3]
+
+  # Define Classifier Layers
+  units: [4096, 4096]
 
 train:
+
   batch_size: 32
   epochs: 10
   loss_function: 'binary_crossentropy'
-  optimizer: 'adam'
+  optimizer: 'adam' # 'adam', 'SGD'
+
   learning_rate: 0.002
+
+general:
+
+  output_dir: 'output/'

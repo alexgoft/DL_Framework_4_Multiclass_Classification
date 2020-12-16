@@ -15,7 +15,7 @@ class DataGenerator(tf.keras.utils.Sequence):
         """Initialization"""
         self.config = config
 
-        self.dim = config['model'].get('input_size', None)
+        self.dim = config['model'].get('input_dim', None)
         self.batch_size = config['train'].get('batch_size', 32)
 
         self.labels = labels
