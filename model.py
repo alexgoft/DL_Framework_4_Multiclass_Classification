@@ -1,8 +1,9 @@
 import os
+import matplotlib.pyplot as plt
 
 from time import time
 from keras.callbacks import ModelCheckpoint, TensorBoard
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers import Dense, Activation, Flatten, BatchNormalization, Conv2D, MaxPooling2D
 from keras.optimizers import Adam, SGD
 from keras.losses import BinaryCrossentropy, CategoricalCrossentropy
@@ -10,6 +11,7 @@ from termcolor import colored
 
 
 class GoftNet:
+
     _OPTIMIZERS = {
         'adam': Adam,
         'SGD': SGD
@@ -45,7 +47,20 @@ class GoftNet:
         self._output_dir = config['general']['output_dir']  # Here Tensorboard logs will be written.
         self._summary = True
 
+        # define pathes
+        timestamp = str(int(time()))
+        self.model_dir_path = os.path.join(self._output_dir, timestamp)
+        self.model_path = os.path.join(self.model_dir_path, 'model.h5')
+        self.log_dir_path = os.path.join(self._output_dir, timestamp, 'logs')
+
+        os.makedirs(self.model_dir_path)
+        os.makedirs(self.log_dir_path)
+
         self._create_model()
+
+    def load_model(self, path):
+        self._model = load_model(path)
+        self._compile()
 
     def _create_block(self, num_features, kernel_shape, number_conv_layers,
                       first_layer=False, last_layer=False, padding='same'):
@@ -121,19 +136,9 @@ class GoftNet:
 
     def train(self, train_data, val_data):
 
-        # define callbacks
-        time_stamp = str(int(time()))
-
-        model_dir = os.path.join(self._output_dir, time_stamp)
-        model_path = os.path.join(model_dir, 'model.h5')
-        os.makedirs(model_dir)
-
-        log_dir = os.path.join(self._output_dir, time_stamp, 'logs')
-        os.makedirs(log_dir)
-
         callbacks = [
-            ModelCheckpoint(filepath=model_path, save_best_only=True, monitor='val_loss'),
-            TensorBoard(log_dir=log_dir)
+            ModelCheckpoint(filepath=self.model_path, save_best_only=True, monitor='val_loss'),
+            TensorBoard(log_dir=self.log_dir_path)
         ]
 
         train_log = self._model.fit_generator(
@@ -148,4 +153,25 @@ class GoftNet:
             verbose=1
         )
 
-        return train_log
+        self.plot_log(train_log=train_log, model_output_path=self.model_path)
+
+    @staticmethod
+    def plot_log(train_log, model_output_path):
+
+        # Plot training & validation accuracy values
+        plt.plot(train_log.history['accuracy'])
+        plt.plot(train_log.history['val_accuracy'])
+        plt.title('Model accuracy')
+        plt.ylabel('Accuracy')
+        plt.xlabel('Epoch')
+        plt.legend(['Train', 'Val'], loc='upper left')
+        plt.savefig(os.path.join(model_output_path, 'acc.png'))
+
+        # Plot training & validation loss values
+        plt.plot(train_log.history['loss'])
+        plt.plot(train_log.history['val_loss'])
+        plt.title('Model loss')
+        plt.ylabel('Loss')
+        plt.xlabel('Epoch')
+        plt.legend(['Train', 'Val'], loc='upper left')
+        plt.savefig(os.path.join(model_output_path, 'loss.png'))
