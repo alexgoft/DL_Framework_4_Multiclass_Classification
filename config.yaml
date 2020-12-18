@@ -4,7 +4,6 @@ data:
   val_set_size: 10000 # Single examples
 
 model:
-
   input_dim: [32,32,3]
 
 #  # Define Feature Extractor Blocks
@@ -25,14 +24,11 @@ model:
   units: [1028]
 
 train:
-
   batch_size: 128
   epochs: 10
   loss_function: 'categorical_crossentropy'
   optimizer: 'adam' # 'adam', 'SGD'
-
-  learning_rate: 0.01
+  learning_rate: 0.001
 
 general:
-
   output_dir: 'output/'

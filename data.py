@@ -32,6 +32,7 @@ def labels_to_one_hot(num_classes, labels):
 
 
 def get_data(config, print_color='yellow'):
+
     print(colored('###################################', print_color))
     print(colored('######### GENERATING DATA #########', print_color))
     print(colored('###################################', print_color))
@@ -55,7 +56,7 @@ def get_data(config, print_color='yellow'):
     # TODO Given solution creates 49,995 train examples..
 
     # Create all tuple combinations given the class number.
-    class_combinations = set(combinations(np.arange(num_classes), 2))
+    class_combinations = list(combinations(np.arange(num_classes), 2))
 
     examples_per_duo = train_examples_num // len(class_combinations)
 
@@ -80,13 +81,19 @@ def get_data(config, print_color='yellow'):
     # -------------- VAL --------------- #
     # ---------------------------------- #
     # Sample needed number of examples
-    val_x = np.array(random.sample(list(val_x_raw), val_examples_num))
+    indices = np.arange(len(val_x_raw))
+    chosen_indices = random.sample(list(indices), val_examples_num)
+
+    val_x = val_x_raw[chosen_indices]
+    val_y = val_y_raw[chosen_indices]
 
     # Normalize images to be between 0 and 1
     val_x = normalize_data(data=val_x)
 
     # validation labels to one_hot
-    val_y = labels_to_one_hot(num_classes=num_classes, labels=val_y_raw)
+    val_y = labels_to_one_hot(num_classes=num_classes, labels=val_y)
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
     train_x = train_x.astype('float32')
     train_y = train_y.astype('float32')
