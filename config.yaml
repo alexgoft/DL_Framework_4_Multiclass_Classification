@@ -28,7 +28,7 @@ train:
   epochs: 10
   loss_function: 'categorical_crossentropy'
   optimizer: 'adam' # 'adam', 'SGD'
-  learning_rate: 0.001
+  learning_rate: 0.01
 
 general:
   output_dir: 'output/'

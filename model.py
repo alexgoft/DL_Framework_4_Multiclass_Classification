@@ -7,7 +7,6 @@ from keras.layers import Dense, Activation, Flatten, BatchNormalization, Conv2D,
 from keras.optimizers import Adam, SGD
 from keras.losses import BinaryCrossentropy, CategoricalCrossentropy
 from termcolor import colored
-from keras.metrics import Accuracy
 
 
 class GoftNet:
@@ -19,7 +18,7 @@ class GoftNet:
     _LOSS_FUNCTIONS = {
 
         # TODO Why categorical crossentropy gives my a constant zero loss??
-        'categorical_crossentropy': BinaryCrossentropy  # CategoricalCrossentropy
+        'categorical_crossentropy': CategoricalCrossentropy
     }
 
     def __init__(self, config):
@@ -73,7 +72,7 @@ class GoftNet:
             loss=loss_function,
             optimizer=optimizer,
 
-            metrics=[Accuracy()]
+            metrics=['accuracy']
 
         )
 
