@@ -7,7 +7,7 @@ from model import GoftNet
 
 def main():
     """
-    Similar to MixUp augmentation
+    Training data somewhat reminds me MixUp augmentation...
     https://towardsdatascience.com/2-reasons-to-use-mixup-when-training-yor-deep-learning-models-58728f15c559
     """
     config = yaml.safe_load(open("config.yaml", 'r'))

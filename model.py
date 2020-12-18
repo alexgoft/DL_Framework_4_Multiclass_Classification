@@ -1,12 +1,13 @@
 import os
 
 from time import time
-from tensorflow.python.keras.callbacks import ModelCheckpoint, TensorBoard
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, Activation, Flatten, BatchNormalization, Conv2D, MaxPooling2D
-from tensorflow.python.keras.optimizers import Adam, SGD
-from tensorflow.python.keras.losses import BinaryCrossentropy
+from keras.callbacks import ModelCheckpoint, TensorBoard
+from keras.models import Sequential
+from keras.layers import Dense, Activation, Flatten, BatchNormalization, Conv2D, MaxPooling2D
+from keras.optimizers import Adam, SGD
+from keras.losses import BinaryCrossentropy, CategoricalCrossentropy
 from termcolor import colored
+from keras.metrics import Accuracy
 
 
 class GoftNet:
@@ -16,7 +17,9 @@ class GoftNet:
     }
 
     _LOSS_FUNCTIONS = {
-        'binary_crossentropy': BinaryCrossentropy
+
+        # TODO Why categorical crossentropy gives my a constant zero loss??
+        'categorical_crossentropy': BinaryCrossentropy  # CategoricalCrossentropy
     }
 
     def __init__(self, config):
@@ -35,6 +38,7 @@ class GoftNet:
 
         # Training parameters.
         self._optimizer = config['train']['optimizer']
+        self._learning_rate = config['train']['learning_rate']
         self._loss_function = config['train']['loss_function']
         self._epochs = config['train']['epochs']
 
@@ -61,12 +65,15 @@ class GoftNet:
             self._model.add(MaxPooling2D(pool_size=(2, 2)))
 
     def _compile(self):
-        optimizer = self._OPTIMIZERS[self._optimizer]()
+
+        optimizer = self._OPTIMIZERS[self._optimizer](lr=self._learning_rate)
         loss_function = self._LOSS_FUNCTIONS[self._loss_function]()
 
         self._model.compile(
             loss=loss_function,
             optimizer=optimizer,
+
+            metrics=[Accuracy()]
 
         )
 
