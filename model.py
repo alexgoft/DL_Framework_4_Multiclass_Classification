@@ -153,10 +153,10 @@ class GoftNet:
             verbose=1
         )
 
-        self.plot_log(train_log=train_log, model_output_path=self.model_path)
+        self.plot_log(train_log=train_log, model_dir_path=self.model_dir_path)
 
     @staticmethod
-    def plot_log(train_log, model_output_path):
+    def plot_log(train_log, model_dir_path):
 
         # Plot training & validation accuracy values
         plt.plot(train_log.history['accuracy'])
@@ -165,7 +165,7 @@ class GoftNet:
         plt.ylabel('Accuracy')
         plt.xlabel('Epoch')
         plt.legend(['Train', 'Val'], loc='upper left')
-        plt.savefig(os.path.join(model_output_path, 'acc.png'))
+        plt.savefig(os.path.join(model_dir_path, 'acc.png'))
 
         # Plot training & validation loss values
         plt.plot(train_log.history['loss'])
@@ -174,4 +174,4 @@ class GoftNet:
         plt.ylabel('Loss')
         plt.xlabel('Epoch')
         plt.legend(['Train', 'Val'], loc='upper left')
-        plt.savefig(os.path.join(model_output_path, 'loss.png'))
+        plt.savefig(os.path.join(model_dir_path, 'loss.png'))
