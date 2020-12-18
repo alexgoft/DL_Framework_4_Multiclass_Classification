@@ -32,7 +32,6 @@ def labels_to_one_hot(num_classes, labels):
 
 
 def get_data(config, print_color='yellow'):
-
     print(colored('###################################', print_color))
     print(colored('######### GENERATING DATA #########', print_color))
     print(colored('###################################', print_color))
@@ -100,7 +99,4 @@ def get_data(config, print_color='yellow'):
     print(colored(f'\tVAL X {val_x.shape} {val_x.dtype}', print_color))
     print(colored(f'\tVAL Y {val_y.shape} {val_y.dtype}', print_color))
 
-
-
     return train_x, train_y, val_x, val_y
-
