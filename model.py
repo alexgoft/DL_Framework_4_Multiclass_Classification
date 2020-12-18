@@ -159,19 +159,21 @@ class GoftNet:
     def plot_log(train_log, model_dir_path):
 
         # Plot training & validation accuracy values
+        f = plt.figure(1)
         plt.plot(train_log.history['accuracy'])
         plt.plot(train_log.history['val_accuracy'])
         plt.title('Model accuracy')
         plt.ylabel('Accuracy')
         plt.xlabel('Epoch')
         plt.legend(['Train', 'Val'], loc='upper left')
-        plt.savefig(os.path.join(model_dir_path, 'acc.png'))
+        f.savefig(os.path.join(model_dir_path, 'acc.png'))
 
         # Plot training & validation loss values
+        g = plt.figure(2)
         plt.plot(train_log.history['loss'])
         plt.plot(train_log.history['val_loss'])
         plt.title('Model loss')
         plt.ylabel('Loss')
         plt.xlabel('Epoch')
         plt.legend(['Train', 'Val'], loc='upper left')
-        plt.savefig(os.path.join(model_dir_path, 'loss.png'))
+        g.savefig(os.path.join(model_dir_path, 'loss.png'))

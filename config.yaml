@@ -6,22 +6,22 @@ data:
 model:
   input_dim: [32,32,3]
 
-  # Define Feature Extractor Blocks
-  num_features: [64, 64, 128, 256, 512, 512]
-  kernel_shapes: [3, 3, 3, 3, 3, 3]
-  num_conv_layers: [1, 1, 2, 3, 3, 3]
-
-  # Define Classifier Layers
-  units: [4096, 4096]
-
-
 #  # Define Feature Extractor Blocks
-#  num_features: [64, 128, 256, 512]
-#  kernel_shapes: [3, 3, 3, 3]
-#  num_conv_layers: [1, 1, 1, 1, 1]
+#  num_features: [64, 64, 128, 256, 512, 512]
+#  kernel_shapes: [3, 3, 3, 3, 3, 3]
+#  num_conv_layers: [1, 1, 2, 3, 3, 3]
 #
 #  # Define Classifier Layers
-#  units: [1028]
+#  units: [4096, 4096]
+
+
+  # Define Feature Extractor Blocks
+  num_features: [64, 128, 256, 512]
+  kernel_shapes: [3, 3, 3, 3]
+  num_conv_layers: [1, 1, 1, 1, 1]
+
+  # Define Classifier Layers
+  units: [1028]
 
 train:
   batch_size: 128
