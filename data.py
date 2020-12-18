@@ -90,7 +90,7 @@ def get_data(config, print_color='yellow'):
 
     train_x = train_x.astype('float32')
     train_y = train_y.astype('float32')
-    val_x = val_y.astype('float32')
+    val_x = val_x.astype('float32')
     val_y = val_y.astype('float32')
 
     print(colored('DATA SHAPES:', print_color))
