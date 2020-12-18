@@ -29,6 +29,8 @@ class DataGenerator(tf.keras.utils.Sequence):
 
         self._shuffle = shuffle
 
+        self._indexes = None
+
         self.on_epoch_end()
 
     def __len__(self):
@@ -53,7 +55,7 @@ class DataGenerator(tf.keras.utils.Sequence):
     def on_epoch_end(self):
         'Updates indexes after each epoch'
         self.indexes = np.arange(len(self._example_ids))
-        if self._shuffle == True:
+        if self._shuffle:
             np.random.shuffle(self.indexes)
 
     def _get_sample(self, idx):
