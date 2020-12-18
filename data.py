@@ -89,11 +89,18 @@ def get_data(config, print_color='yellow'):
     # validation labels to one_hot
     val_y = labels_to_one_hot(num_classes=num_classes, labels=val_y_raw)
 
+    train_x = train_x.astype('float32')
+    train_y = train_y.astype('float32')
+    val_x = val_y.astype('float32')
+    val_y = val_y.astype('float32')
+
     print(colored('DATA SHAPES:', print_color))
-    print(colored(f'\tTRAIN X {train_x.shape}', print_color))
-    print(colored(f'\tTRAIN Y {train_y.shape}', print_color))
-    print(colored(f'\tVAL X {val_x.shape}', print_color))
-    print(colored(f'\tVAL Y {val_y.shape}', print_color))
+    print(colored(f'\tTRAIN X {train_x.shape} {train_x.dtype}', print_color))
+    print(colored(f'\tTRAIN Y {train_y.shape} {train_y.dtype}', print_color))
+    print(colored(f'\tVAL X {val_x.shape} {val_x.dtype}', print_color))
+    print(colored(f'\tVAL Y {val_y.shape} {val_y.dtype}', print_color))
+
+
 
     return train_x, train_y, val_x, val_y
 
