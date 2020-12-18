@@ -20,7 +20,7 @@ def main():
 
     # Create model
     model = GoftNet(config=config)
-    model.train(train_data=val_generator, val_data=val_generator)
+    model.train(train_data=train_generator, val_data=val_generator)
 
 
 if __name__ == '__main__':

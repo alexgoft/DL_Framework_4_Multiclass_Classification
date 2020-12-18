@@ -83,7 +83,7 @@ class DataGenerator(tf.keras.utils.Sequence):
             dim = self._dim
 
         images = np.empty((self._batch_size, *dim))
-        labels = np.empty((self._batch_size, self._n_classes), dtype=int)
+        labels = np.empty((self._batch_size, self._n_classes))
 
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
