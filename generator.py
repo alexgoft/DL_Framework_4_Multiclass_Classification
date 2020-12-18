@@ -88,9 +88,6 @@ class DataGenerator(tf.keras.utils.Sequence):
 
             image, label = self._get_sample(ID)
 
-            if len(image.shape) != 3:
-                x = 0
-
             # Store sample
             images[i,] = image
 
