@@ -32,7 +32,6 @@ def labels_to_one_hot(num_classes, labels):
 
 
 def get_data(config, print_color='yellow'):
-
     print(colored('###################################', print_color))
     print(colored('######### GENERATING DATA #########', print_color))
     print(colored('###################################', print_color))
@@ -53,29 +52,50 @@ def get_data(config, print_color='yellow'):
     # ---------------------------------- #
     # ------------ TRAIN --------------- #
     # ---------------------------------- #
-    # TODO Given solution creates 49,995 train examples..
-
-    # Create all tuple combinations given the class number.
-    class_combinations = list(combinations(np.arange(num_classes), 2))
-
-    examples_per_duo = train_examples_num // len(class_combinations)
-
     train_x = []
     train_y = []
-    for cls_1, cls_2 in class_combinations:
-        cls_1_examples = get_class_examples(train_x_raw, train_y_raw, cls=cls_1, num_examples=examples_per_duo)
-        cls_2_examples = get_class_examples(train_x_raw, train_y_raw, cls=cls_2, num_examples=examples_per_duo)
+    while len(train_x) != train_examples_num:
 
-        curr_comb_label = tuple_to_prob_vector(num_classes=num_classes, class_1=cls_1, class_2=cls_2)
-        curr_comb_labels = [curr_comb_label] * examples_per_duo
+        idx_1, idx_2 = random.sample(range(0, len(train_x_raw)), 2)
 
-        curr_comb_data = list(zip(cls_1_examples, cls_2_examples))
+        sample_1_cls = train_y_raw[idx_1]
+        sample_2_cls = train_y_raw[idx_2]
 
-        train_x += curr_comb_data
-        train_y += curr_comb_labels
+        if sample_1_cls != sample_2_cls:
+            example_1 = train_x_raw[sample_1_cls]
+            example_2 = train_x_raw[sample_2_cls]
+
+            example = np.stack([example_1, example_2])
+            label = np.eye(num_classes)[sample_1_cls] + np.eye(num_classes)[sample_2_cls]
+
+            train_x.append(example)
+            train_y.append(label)
 
     train_x = normalize_data(data=train_x)
-    train_y = np.array(train_y)
+    train_y = np.array(train_y) / 2
+
+    # TODO Given solution creates 49,995 train examples..
+    # # Create all tuple combinations given the class number.
+    # class_combinations = list(combinations(np.arange(num_classes), 2))
+    #
+    # examples_per_duo = train_examples_num // len(class_combinations)
+    #
+    # train_x = []
+    # train_y = []
+    # for cls_1, cls_2 in class_combinations:
+    #     cls_1_examples = get_class_examples(train_x_raw, train_y_raw, cls=cls_1, num_examples=examples_per_duo)
+    #     cls_2_examples = get_class_examples(train_x_raw, train_y_raw, cls=cls_2, num_examples=examples_per_duo)
+    #
+    #     curr_comb_label = tuple_to_prob_vector(num_classes=num_classes, class_1=cls_1, class_2=cls_2)
+    #     curr_comb_labels = [curr_comb_label] * examples_per_duo
+    #
+    #     curr_comb_data = list(zip(cls_1_examples, cls_2_examples))
+    #
+    #     train_x += curr_comb_data
+    #     train_y += curr_comb_labels
+    #
+    # train_x = normalize_data(data=train_x)
+    # train_y = np.array(train_y)
 
     # ---------------------------------- #
     # -------------- VAL --------------- #
@@ -99,6 +119,11 @@ def get_data(config, print_color='yellow'):
     train_y = train_y.astype('float32')
     val_x = val_x.astype('float32')
     val_y = val_y.astype('float32')
+
+    # train_x = train_x[:2, :, :]
+    # train_y = train_y[:2, :]
+    # val_x = val_x[:2, :, :]
+    # val_y = val_y[:2, :]
 
     print(colored('DATA SHAPES:', print_color))
     print(colored(f'\tTRAIN X {train_x.shape} {train_x.dtype}', print_color))

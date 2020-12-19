@@ -4,17 +4,17 @@ import matplotlib.pyplot as plt
 from time import time
 from keras.callbacks import ModelCheckpoint, TensorBoard
 from keras.models import Sequential, load_model
-from keras.layers import Dense, Activation, Flatten, BatchNormalization, Conv2D, MaxPooling2D
-from keras.optimizers import Adam, SGD
-from keras.losses import BinaryCrossentropy, CategoricalCrossentropy
+from keras.layers import Dense, Activation, Flatten, BatchNormalization, Conv2D, MaxPooling2D, Dropout
+from keras.optimizers import Adam, SGD, RMSprop
+from keras.losses import CategoricalCrossentropy
 from termcolor import colored
 
 
 class GoftNet:
-
     _OPTIMIZERS = {
         'adam': Adam,
-        'SGD': SGD
+        'SGD': SGD,
+        'RMSprop': RMSprop
     }
 
     _LOSS_FUNCTIONS = {
@@ -36,10 +36,10 @@ class GoftNet:
 
         # Classifier Layers
         self._units = config['model']['units']
+        self._last_layer_activation = config['model']['last_later_activation']
 
         # Training parameters.
         self._optimizer = config['train']['optimizer']
-        self._learning_rate = config['train']['learning_rate']
         self._loss_function = config['train']['loss_function']
         self._epochs = config['train']['epochs']
 
@@ -53,8 +53,8 @@ class GoftNet:
         self.model_path = os.path.join(self.model_dir_path, 'model.h5')
         self.log_dir_path = os.path.join(self._output_dir, timestamp, 'logs')
 
-        os.makedirs(self.model_dir_path)
-        os.makedirs(self.log_dir_path)
+        os.makedirs(self.model_dir_path, exist_ok=True)
+        os.makedirs(self.log_dir_path, exist_ok=True)
 
         self._create_model()
 
@@ -62,8 +62,11 @@ class GoftNet:
         self._model = load_model(path)
         self._compile()
 
-    def _create_block(self, num_features, kernel_shape, number_conv_layers,
-                      first_layer=False, last_layer=False, padding='same'):
+    def _create_block(self,
+                      num_features, kernel_shape, number_conv_layers,
+                      first_layer, last_layer,
+                      padding='same'
+                      ):
 
         for _ in range(number_conv_layers):
 
@@ -72,15 +75,24 @@ class GoftNet:
             else:
                 self._model.add(Conv2D(num_features, kernel_shape, padding=padding))
 
+            # BN is broken...?
+            # http://blog.datumbox.com/the-batch-normalization-layer-of-keras-is-broken/
             self._model.add(BatchNormalization())
+            # self._model.add(Dropout(0.3))
             self._model.add(Activation('relu'))
 
-        if last_layer:
+        if not last_layer:
             self._model.add(MaxPooling2D(pool_size=(2, 2)))
+
+    def _get_optimizer(self):
+        name = self._optimizer['name']
+        opt_params = self._optimizer['params']
+
+        return self._OPTIMIZERS[name](**opt_params)
 
     def _compile(self):
 
-        optimizer = self._OPTIMIZERS[self._optimizer](lr=self._learning_rate)
+        optimizer = self._get_optimizer()
         loss_function = self._LOSS_FUNCTIONS[self._loss_function]()
 
         self._model.compile(
@@ -107,13 +119,16 @@ class GoftNet:
                                                                               self._kernel_shapes,
                                                                               self._num_conv_layers)):
             if i == 0:  # First Layer. Need to define input layer
-                self._create_block(num_features, kernel_shape, num_conv_layers, first_layer=True)
-
-            elif i == len(self._num_features):  # Last Layer. No max pooling.
-                pass
-
+                first_layer, last_layer = True, False
+            elif i == len(self._num_features) - 1:  # Last Layer. No max pooling.
+                first_layer, last_layer = False, True
             else:
-                self._create_block(num_features, kernel_shape, num_conv_layers, last_layer=True)
+                first_layer, last_layer = False, False
+
+            self._create_block(
+                num_features, kernel_shape, num_conv_layers,
+                first_layer=first_layer, last_layer=last_layer
+            )
 
         # ---------------------------------------- #
         # ----- DEFINE CLASSIFIER BLOCKS --------- #
@@ -125,7 +140,7 @@ class GoftNet:
             self._model.add(Activation('relu'))
 
         self._model.add(Dense(self._num_classes))
-        self._model.add(Activation('softmax'))
+        self._model.add(Activation(self._last_layer_activation))
 
         # Compile the model with chosen optimizer.
         self._compile()
