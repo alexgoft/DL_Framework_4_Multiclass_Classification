@@ -8,10 +8,10 @@ from model import GoftNet
 def main():
     """
     1) Training data somewhat reminds me MixUp augmentation...
-
     https://towardsdatascience.com/2-reasons-to-use-mixup-when-training-yor-deep-learning-models-58728f15c559
 
-    2)
+    2) mixup: BEYOND EMPIRICAL RISK MINIMIZATION
+    https://arxiv.org/pdf/1710.09412v2.pdf
 
     """
     config = yaml.safe_load(open("config.yaml", 'r'))
