@@ -31,6 +31,7 @@ class DataGenerator(tf.keras.utils.Sequence):
 
         self._indexes = None
 
+        # Augmentations
         self._random_eraser_aug = self.get_random_eraser()
 
         self.on_epoch_end()
