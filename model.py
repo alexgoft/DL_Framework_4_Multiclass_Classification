@@ -7,6 +7,8 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense, Activation, Flatten, BatchNormalization, Conv2D, MaxPooling2D, Dropout
 from keras.optimizers import Adam, SGD, RMSprop
 from keras.losses import CategoricalCrossentropy, MSE
+from keras.applications import MobileNetV2
+from keras.utils import to_categorical
 from termcolor import colored
 
 
@@ -20,7 +22,7 @@ class GoftNet:
     _LOSS_FUNCTIONS = {
 
         # TODO Why categorical crossentropy gives my a constant zero loss??
-        'categorical_crossentropy': CategoricalCrossentropy,
+        'categorical_crossentropy': CategoricalCrossentropy(),
         'mse': MSE
     }
 
@@ -57,11 +59,16 @@ class GoftNet:
         os.makedirs(self.model_dir_path, exist_ok=True)
         os.makedirs(self.log_dir_path, exist_ok=True)
 
-        self._create_model()
+        # self._create_model()
 
-    # def load_model(self, path):
-    #     self._model = load_model(path)
-    #     self._compile()
+        self._model = MobileNetV2(
+            include_top=True,
+            weights=None,
+            input_shape=(32,32,3),
+            classes=10,
+            classifier_activation=None
+        )
+        self._compile()
 
     def _create_block(self,
                       num_features, kernel_shape, number_conv_layers,
@@ -94,7 +101,7 @@ class GoftNet:
     def _compile(self):
 
         optimizer = self._get_optimizer()
-        loss_function = self._LOSS_FUNCTIONS[self._loss_function]()
+        loss_function = self._LOSS_FUNCTIONS[self._loss_function]
 
         self._model.compile(
             loss=loss_function,
@@ -178,6 +185,15 @@ class GoftNet:
         )
 
         self.plot_log(train_log=train_log, model_dir_path=self.model_dir_path)
+
+    def load_model(self, path):
+        self._model = load_model(path)
+        self._compile()
+
+    def inference_on_data(self, test_data):
+        result = self._model.predict(test_data)
+        result = to_categorical(result, num_classes=self._num_classes)
+        return result
 
     @staticmethod
     def plot_log(train_log, model_dir_path):

@@ -28,22 +28,22 @@ model:
 train:
 
   batch_size: 128
-  epochs: 100
+  epochs: 5
 
-  loss_function: 'categorical_crossentropy' # 'categorical_crossentropy', 'mse'
-
-  optimizer:
-    name: 'SGD'
-    params:
-      momentum: 0.9
-      learning_rate: 0.0001
-#      decay: 1.0e-6
-      nesterov: True
+  loss_function: 'mse' # 'categorical_crossentropy', 'mse'
 
 #  optimizer:
-#    name: 'adam'
+#    name: 'SGD'
 #    params:
+#      momentum: 0.9
 #      learning_rate: 0.0001
+##      decay: 1.0e-6
+#      nesterov: True
+
+  optimizer:
+    name: 'adam'
+    params:
+      learning_rate: 0.01
 
 #  optimizer:
 #    name: 'RMSprop'
