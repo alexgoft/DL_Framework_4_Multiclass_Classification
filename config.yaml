@@ -13,7 +13,7 @@ model:
 #
 #  # Define Classifier Layers
 #  units: [4096, 4096]
-#  last_later_activation: 'sigmoid' # 'sigmoid', 'softmax'
+#  last_later_activation: 'sigmoid' # 'sigmoid', 'softmax', None
 
   # Define Feature Extractor Blocks
   num_features: [32, 64, 128]
@@ -22,26 +22,26 @@ model:
 
   # Define Classifier Layers
   units: [32, 32]
-  last_later_activation: 'sigmoid' # 'sigmoid', 'softmax'
+#  last_later_activation: 'softmax' # 'sigmoid', 'softmax', None
 
 train:
   batch_size: 128
   epochs: 100
 
-  loss_function: 'categorical_crossentropy'
-
-  optimizer:
-    name: 'SGD'
-    params:
-      momentum: 0.9
-      learning_rate: 0.001
-      decay: 1.0e-6
-      nesterov: True
+  loss_function: 'categorical_crossentropy' # 'categorical_crossentropy', 'mse'
 
 #  optimizer:
-#    name: 'adam'
+#    name: 'SGD'
 #    params:
-#      learning_rate: 0.01
+#      momentum: 0.9
+#      learning_rate: 0.00001
+#      decay: 1.0e-6
+#      nesterov: True
+
+  optimizer:
+    name: 'adam'
+    params:
+      learning_rate: 0.0001
 
 #  optimizer:
 #    name: 'RMSprop'

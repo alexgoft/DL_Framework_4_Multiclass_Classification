@@ -72,7 +72,7 @@ def get_data(config, print_color='yellow'):
             train_y.append(label)
 
     train_x = normalize_data(data=train_x)
-    train_y = np.array(train_y) / 2
+    train_y = np.array(train_y) # / 2
 
     # # TODO Given solution creates 49,995 train examples..
     # # Create all tuple combinations given the class number.

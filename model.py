@@ -6,7 +6,7 @@ from keras.callbacks import ModelCheckpoint, TensorBoard
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Activation, Flatten, BatchNormalization, Conv2D, MaxPooling2D, Dropout
 from keras.optimizers import Adam, SGD, RMSprop
-from keras.losses import CategoricalCrossentropy
+from keras.losses import CategoricalCrossentropy, MSE
 from termcolor import colored
 
 
@@ -20,7 +20,8 @@ class GoftNet:
     _LOSS_FUNCTIONS = {
 
         # TODO Why categorical crossentropy gives my a constant zero loss??
-        'categorical_crossentropy': CategoricalCrossentropy
+        'categorical_crossentropy': CategoricalCrossentropy,
+        'mse': MSE
     }
 
     def __init__(self, config):
@@ -36,7 +37,7 @@ class GoftNet:
 
         # Classifier Layers
         self._units = config['model']['units']
-        self._last_layer_activation = config['model']['last_later_activation']
+        self._last_layer_activation = config['model'].get('last_later_activation', None)
 
         # Training parameters.
         self._optimizer = config['train']['optimizer']
@@ -140,7 +141,10 @@ class GoftNet:
             self._model.add(Activation('relu'))
 
         self._model.add(Dense(self._num_classes))
-        self._model.add(Activation(self._last_layer_activation))
+        if self._last_layer_activation is not None:
+
+            # If last layer activation is None, loss wil be calculated directly on logits.
+            self._model.add(Activation(self._last_layer_activation))
 
         # Compile the model with chosen optimizer.
         self._compile()
