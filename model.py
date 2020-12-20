@@ -1,17 +1,19 @@
 import os
+import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import tensorflow as tf
 
 from time import time
 from keras.callbacks import ModelCheckpoint, TensorBoard
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Activation, Flatten, BatchNormalization, Conv2D, MaxPooling2D, Dropout
 from keras.optimizers import Adam, SGD, RMSprop
-from keras.losses import CategoricalCrossentropy, MSE
-from keras.applications import MobileNetV2
+from keras.losses import CategoricalCrossentropy, BinaryCrossentropy, MSE
 from keras.utils import to_categorical
 from termcolor import colored
 from sklearn.metrics import confusion_matrix, classification_report
+from functools import partial
 
 
 class GoftNet:
@@ -25,7 +27,9 @@ class GoftNet:
 
         # TODO Why categorical crossentropy gives my a constant zero loss??
         'categorical_crossentropy': CategoricalCrossentropy(),
-        'mse': MSE
+        'binary_crossentropy': BinaryCrossentropy(),
+        'mse': MSE,
+        'cross_entropy_with_logits': tf.nn.softmax_cross_entropy_with_logits,
     }
 
     def __init__(self, config):
@@ -65,14 +69,6 @@ class GoftNet:
 
         self._create_model()
 
-        # self._model = MobileNetV2(
-        #     include_top=True,
-        #     weights=None,
-        #     input_shape=(32,32,3),
-        #     classes=10,
-        #     classifier_activation=None
-        # )
-        # self._compile()
 
     def _create_block(self,
                       num_features, kernel_shape, number_conv_layers,
@@ -187,11 +183,13 @@ class GoftNet:
         self.plot_log(train_log=train_log, model_dir_path=self.model_dir_path)
 
     def load_model(self, path):
-        self._model = load_model(path)
+        self._model = load_model(path, custom_objects={'softmax_cross_entropy_with_logits_v2': tf.nn.softmax_cross_entropy_with_logits})
         self._compile()
 
     def inference_on_data(self, test_data):
         result = self._model.predict(test_data)
+
+        # Todo: Fix below
         result = to_categorical(result, num_classes=self._num_classes)
         return result
 

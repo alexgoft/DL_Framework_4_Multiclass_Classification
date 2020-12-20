@@ -5,7 +5,7 @@ from model import GoftNet
 
 
 def main():
-    MODEL_PATH = '/hdd/cool_cifar10/output/1608485588/model.h5'
+    MODEL_PATH = '/hdd/cool_cifar10/output/1608488083/model.h5'
 
     config = yaml.safe_load(open("config.yaml", 'r'))
 
