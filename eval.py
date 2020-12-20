@@ -5,7 +5,6 @@ from model import GoftNet
 
 
 def main():
-    MODEL_PATH = '/hdd/cool_cifar10/output/1608488083/model.h5'
 
     config = yaml.safe_load(open("config.yaml", 'r'))
 
@@ -18,16 +17,13 @@ def main():
     # =========== TEST MODEL ON DATA ============ #
     # =========================================== #
     model = GoftNet(config=config)
-    model.load_model(path=MODEL_PATH)
+    model.load_model()
 
+    # =========================================== #
+    # ================ EVALUATE ================= #
+    # =========================================== #
     y_pred = model.inference_on_data(test_data=x_test)
-    cm, metrics = model.get_metrics(y_pred, y_test)
-
-    print("\n===================================================")
-    print("============== CLASSIFICATION REPORT ==============")
-    print("===================================================")
-    print(metrics, '\n')
-    print(cm)
+    model.print_metrics(y_pred, y_test)
 
 
 if __name__ == '__main__':

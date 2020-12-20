@@ -2,7 +2,6 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import tensorflow as tf
 
 from time import time
 from keras.callbacks import ModelCheckpoint, TensorBoard
@@ -10,14 +9,12 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense, Activation, Flatten, BatchNormalization, Conv2D, MaxPooling2D, Dropout
 from keras.optimizers import Adam, SGD, RMSprop
 from keras.losses import CategoricalCrossentropy, BinaryCrossentropy, MSE
-from keras.utils import to_categorical
 from termcolor import colored
 from sklearn.metrics import confusion_matrix, classification_report
-from functools import partial
-from losses import alex_loss
 
 
 class GoftNet:
+
     _OPTIMIZERS = {
         'adam': Adam,
         'SGD': SGD,
@@ -30,7 +27,6 @@ class GoftNet:
         'categorical_crossentropy': CategoricalCrossentropy(),
         'binary_crossentropy': BinaryCrossentropy(),
         'mse': MSE,
-        'sigmoid_cross_entropy_with_logits': alex_loss,
     }
 
     def __init__(self, config):
@@ -59,6 +55,9 @@ class GoftNet:
         self._output_dir = config['general']['output_dir']  # Here Tensorboard logs will be written.
         self._summary = True
 
+        # Eval
+        self._model_path = config['eval']['model_path']
+
         # define pathes
         timestamp = str(int(time()))
         self.model_dir_path = os.path.join(self._output_dir, timestamp)
@@ -83,8 +82,6 @@ class GoftNet:
             else:
                 self._model.add(Conv2D(num_features, kernel_shape, padding=padding))
 
-            # BN is broken...?
-            # http://blog.datumbox.com/the-batch-normalization-layer-of-keras-is-broken/
             self._model.add(BatchNormalization())
             # self._model.add(Dropout(0.3))
             self._model.add(Activation('relu'))
@@ -107,8 +104,7 @@ class GoftNet:
             loss=loss_function,
             optimizer=optimizer,
 
-            metrics=['accuracy']  # TODO It is not suitable for our training data.
-
+            metrics=['accuracy']
         )
 
     def _create_model(self, print_color='yellow'):
@@ -183,19 +179,16 @@ class GoftNet:
 
         self.plot_log(train_log=train_log, model_dir_path=self.model_dir_path)
 
-    def load_model(self, path):
-        self._model = load_model(path, custom_objects={
-            'softmax_cross_entropy_with_logits_v2': tf.nn.softmax_cross_entropy_with_logits})
+    def load_model(self,):
+        self._model = load_model(self._model_path)
         self._compile()
 
     def inference_on_data(self, test_data):
-        result = self._model.predict(test_data)
+        results = self._model.predict(test_data, verbose=1)
+        results = [np.eye(self._num_classes)[np.argmax(res)] for res in results]  # Turn results to one hot.
+        return results
 
-        # Todo: Fix below
-        result = to_categorical(result, num_classes=self._num_classes)
-        return result
-
-    def get_metrics(self, y_pred, y_test):
+    def print_metrics(self, y_pred, y_test):
 
         y_pred_labels = [self._class_labels_dict[class_num] for class_num in np.argmax(y_pred, axis=1)]
         y_test_labels = [self._class_labels_dict[class_num] for class_num in np.argmax(y_test, axis=1)]
@@ -205,7 +198,11 @@ class GoftNet:
 
         report = classification_report(y_test, y_pred)
 
-        return cm, report
+        print("\n===================================================")
+        print("============== CLASSIFICATION REPORT ==============")
+        print("===================================================")
+        print(report, '\n')
+        print(cm)
 
     @staticmethod
     def plot_log(train_log, model_dir_path):

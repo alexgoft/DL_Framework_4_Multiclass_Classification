@@ -1,37 +1,52 @@
 data:
+
   num_classes: 10
   labels: ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
   train_set_size: 5000 # Pairs
   val_set_size: 10000 # Single examples
 
 model:
+
+  # ------------------------------ #
+  # Input
+  # ------------------------------ #
   input_dim: [32,32,3]
 
-#  # Define Feature Extractor Blocks
-#  num_features: [64, 64, 128, 256, 512, 512]
-#  kernel_shapes: [3, 3, 3, 3, 3, 3]
-#  num_conv_layers: [1, 1, 2, 3, 3, 3]
-#
-#  # Define Classifier Layers
-#  units: [4096, 4096]
-##  last_later_activation: 'sigmoid' # 'sigmoid', 'softmax', None
-
-
+  # ------------------------------ #
   # Define Feature Extractor Blocks
+  # ------------------------------ #
   num_features: [32, 64, 128]
   kernel_shapes: [3, 3, 3]
   num_conv_layers: [2, 2, 2]
 
+  # ------------------------------ #
   # Define Classifier Layers
+  # ------------------------------ #
   units: [128]
-#  last_later_activation: 'sigmoid' # 'sigmoid', 'softmax', None
+
+  # Sigmoid converts each score of the final node between 0 to 1 independent of what the other scores are.
+  last_later_activation: 'sigmoid' # 'sigmoid', 'softmax', None
+
+  #  # Define Feature Extractor Blocks
+  #  num_features: [64, 64, 128, 256, 512, 512]
+  #  kernel_shapes: [3, 3, 3, 3, 3, 3]
+  #  num_conv_layers: [1, 1, 2, 3, 3, 3]
+  #
+  #  # Define Classifier Layers
+  #  units: [4096, 4096]
+  ##  last_later_activation: 'sigmoid' # 'sigmoid', 'softmax', None
 
 train:
 
   batch_size: 64
   epochs: 10
 
-  loss_function: 'sigmoid_cross_entropy_with_logits' # 'binary_crossentropy', 'categorical_crossentropy', 'mse'
+  loss_function: 'binary_crossentropy' # 'binary_crossentropy', 'categorical_crossentropy', 'mse'
+
+  optimizer:
+    name: 'adam'
+    params:
+      learning_rate: 0.001
 
 #  optimizer:
 #    name: 'SGD'
@@ -41,16 +56,13 @@ train:
 ##      decay: 1.0e-6
 #      nesterov: True
 
-  optimizer:
-    name: 'adam'
-    params:
-      learning_rate: 0.001
-
 #  optimizer:
 #    name: 'RMSprop'
 #    params:
 #      learning_rate: 0.1
 
+eval:
+  model_path: 'C:\Users\alexg\Desktop\cool_cifar10\output\1608494589\model.h5'
 
 general:
-  output_dir: 'output/'
+  output_dir: 'output\'
