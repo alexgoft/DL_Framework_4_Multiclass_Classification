@@ -24,14 +24,14 @@ model:
 
   # Define Classifier Layers
   units: [128]
-  last_later_activation: 'sigmoid' # 'sigmoid', 'softmax', None
+#  last_later_activation: 'sigmoid' # 'sigmoid', 'softmax', None
 
 train:
 
   batch_size: 64
   epochs: 10
 
-  loss_function: 'binary_crossentropy' # 'binary_crossentropy', 'categorical_crossentropy', 'mse'
+  loss_function: 'sigmoid_cross_entropy_with_logits' # 'binary_crossentropy', 'categorical_crossentropy', 'mse'
 
 #  optimizer:
 #    name: 'SGD'

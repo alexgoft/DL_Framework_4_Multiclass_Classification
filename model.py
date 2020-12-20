@@ -14,6 +14,7 @@ from keras.utils import to_categorical
 from termcolor import colored
 from sklearn.metrics import confusion_matrix, classification_report
 from functools import partial
+from losses import alex_loss
 
 
 class GoftNet:
@@ -29,7 +30,7 @@ class GoftNet:
         'categorical_crossentropy': CategoricalCrossentropy(),
         'binary_crossentropy': BinaryCrossentropy(),
         'mse': MSE,
-        'cross_entropy_with_logits': tf.nn.softmax_cross_entropy_with_logits,
+        'sigmoid_cross_entropy_with_logits': alex_loss,
     }
 
     def __init__(self, config):
@@ -68,7 +69,6 @@ class GoftNet:
         os.makedirs(self.log_dir_path, exist_ok=True)
 
         self._create_model()
-
 
     def _create_block(self,
                       num_features, kernel_shape, number_conv_layers,
@@ -183,7 +183,8 @@ class GoftNet:
         self.plot_log(train_log=train_log, model_dir_path=self.model_dir_path)
 
     def load_model(self, path):
-        self._model = load_model(path, custom_objects={'softmax_cross_entropy_with_logits_v2': tf.nn.softmax_cross_entropy_with_logits})
+        self._model = load_model(path, custom_objects={
+            'softmax_cross_entropy_with_logits_v2': tf.nn.softmax_cross_entropy_with_logits})
         self._compile()
 
     def inference_on_data(self, test_data):
