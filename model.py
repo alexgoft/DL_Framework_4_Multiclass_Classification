@@ -107,7 +107,7 @@ class GoftNet:
             loss=loss_function,
             optimizer=optimizer,
 
-            metrics=['accuracy']
+            metrics=['accuracy'] # TODO It is not suitable for our training data.
 
         )
 
