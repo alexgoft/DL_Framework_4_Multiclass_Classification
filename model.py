@@ -1,5 +1,6 @@
 import os
 import matplotlib.pyplot as plt
+import numpy as np
 
 from time import time
 from keras.callbacks import ModelCheckpoint, TensorBoard
@@ -10,6 +11,7 @@ from keras.losses import CategoricalCrossentropy, MSE
 from keras.applications import MobileNetV2
 from keras.utils import to_categorical
 from termcolor import colored
+from sklearn.metrics import confusion_matrix, classification_report
 
 
 class GoftNet:
@@ -194,6 +196,18 @@ class GoftNet:
         result = self._model.predict(test_data)
         result = to_categorical(result, num_classes=self._num_classes)
         return result
+
+    def get_metrics(self, y_pred, y_test):
+
+        y_pred_labels = [self._class_labels_dict[class_num] for class_num in np.argmax(y_pred, axis=1)]
+        y_test_labels = [self._class_labels_dict[class_num] for class_num in np.argmax(y_test, axis=1)]
+
+        cm = confusion_matrix(y_pred_labels, y_test_labels, labels=np.unique(y_test_labels))
+        cm = pd.DataFrame(cm, index=np.unique(y_test_labels), columns=np.unique(y_test_labels))
+
+        report = classification_report(y_test, y_pred)
+
+        return cm, report
 
     @staticmethod
     def plot_log(train_log, model_dir_path):
