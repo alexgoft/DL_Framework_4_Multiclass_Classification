@@ -63,9 +63,7 @@ class GoftNet:
         os.makedirs(self.model_dir_path, exist_ok=True)
         os.makedirs(self.log_dir_path, exist_ok=True)
 
-
         self._create_model()
-
 
         # self._model = MobileNetV2(
         #     include_top=True,
@@ -157,7 +155,6 @@ class GoftNet:
 
         self._model.add(Dense(self._num_classes))
         if self._last_layer_activation is not None:
-
             # If last layer activation is None, loss wil be calculated directly on logits.
             self._model.add(Activation(self._last_layer_activation))
 
@@ -167,9 +164,6 @@ class GoftNet:
         # Summary
         if self._summary:
             self._model.summary()
-
-            # from keras.utils import plot_model
-            # plot_model(self._model, show_shapes=True, show_layer_names=True, to_file='model.png')
 
     def train(self, train_data, val_data):
 
