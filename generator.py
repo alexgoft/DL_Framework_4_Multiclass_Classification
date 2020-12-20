@@ -1,5 +1,7 @@
 import tensorflow as tf
 import numpy as np
+import random
+import cv2
 
 
 class DataGenerator(tf.keras.utils.Sequence):
@@ -67,10 +69,11 @@ class DataGenerator(tf.keras.utils.Sequence):
         label = self._labels[idx]
 
         if len(image.shape) == 4:
-
             # If it's training examples, we shall combine both images to a single image.
             image = np.average(image, axis=0)
-            # image = self._random_eraser_aug(input_img=image)
+
+            alpha = random.uniform(0.3, 0.7)
+            image = cv2.addWeighted(image[0], alpha, image[1], (1 - alpha), 0)
 
         return image, label
 
@@ -89,11 +92,10 @@ class DataGenerator(tf.keras.utils.Sequence):
 
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
-
             image, label = self._get_sample(ID)
 
             # Store sample
-            images[i, ] = image
+            images[i,] = image
 
             # Store class
             labels[i] = label
