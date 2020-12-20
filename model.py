@@ -159,7 +159,7 @@ class GoftNet:
     def train(self, train_data, val_data):
 
         callbacks = [
-            ModelCheckpoint(filepath=self.model_path, save_best_only=True, monitor='val_loss'),
+            ModelCheckpoint(filepath=self.model_path, monitor='val_accuracy', mode='max', save_best_only=True),
             TensorBoard(log_dir=self.log_dir_path)
         ]
 
