@@ -31,6 +31,8 @@ class GoftNet:
     def __init__(self, config):
 
         self._num_classes = config['data']['num_classes']
+        self._class_labels = config['data']['labels']
+        self._class_labels_dict = {i: self._class_labels[i] for i in range(len(self._class_labels))}
         self._input_dim = config['model']['input_dim']
 
         # Feature Extractor Blocks
@@ -61,16 +63,18 @@ class GoftNet:
         os.makedirs(self.model_dir_path, exist_ok=True)
         os.makedirs(self.log_dir_path, exist_ok=True)
 
-        # self._create_model()
 
-        self._model = MobileNetV2(
-            include_top=True,
-            weights=None,
-            input_shape=(32,32,3),
-            classes=10,
-            classifier_activation=None
-        )
-        self._compile()
+        self._create_model()
+
+
+        # self._model = MobileNetV2(
+        #     include_top=True,
+        #     weights=None,
+        #     input_shape=(32,32,3),
+        #     classes=10,
+        #     classifier_activation=None
+        # )
+        # self._compile()
 
     def _create_block(self,
                       num_features, kernel_shape, number_conv_layers,

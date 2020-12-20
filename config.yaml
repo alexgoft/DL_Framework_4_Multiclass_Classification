@@ -1,5 +1,6 @@
 data:
   num_classes: 10
+  labels: ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
   train_set_size: 5000 # Pairs
   val_set_size: 10000 # Single examples
 
