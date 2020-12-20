@@ -59,9 +59,9 @@ class GoftNet:
 
         self._create_model()
 
-    def load_model(self, path):
-        self._model = load_model(path)
-        self._compile()
+    # def load_model(self, path):
+    #     self._model = load_model(path)
+    #     self._compile()
 
     def _create_block(self,
                       num_features, kernel_shape, number_conv_layers,
@@ -121,8 +121,10 @@ class GoftNet:
                                                                               self._num_conv_layers)):
             if i == 0:  # First Layer. Need to define input layer
                 first_layer, last_layer = True, False
+
             elif i == len(self._num_features) - 1:  # Last Layer. No max pooling.
                 first_layer, last_layer = False, True
+
             else:
                 first_layer, last_layer = False, False
 
@@ -152,6 +154,9 @@ class GoftNet:
         # Summary
         if self._summary:
             self._model.summary()
+
+            # from keras.utils import plot_model
+            # plot_model(self._model, show_shapes=True, show_layer_names=True, to_file='model.png')
 
     def train(self, train_data, val_data):
 
