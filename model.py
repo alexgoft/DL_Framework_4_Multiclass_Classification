@@ -151,6 +151,7 @@ class GoftNet:
 
         self._model.add(Dense(self._num_classes))
         if self._last_layer_activation is not None:
+
             # If last layer activation is None, loss wil be calculated directly on logits.
             self._model.add(Activation(self._last_layer_activation))
 
