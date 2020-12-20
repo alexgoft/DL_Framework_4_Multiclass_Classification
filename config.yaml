@@ -39,7 +39,7 @@ model:
 train:
 
   batch_size: 64
-  epochs: 10
+  epochs: 4
 
   loss_function: 'binary_crossentropy' # 'binary_crossentropy', 'categorical_crossentropy', 'mse'
 

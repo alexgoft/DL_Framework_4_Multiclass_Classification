@@ -14,7 +14,6 @@ from sklearn.metrics import confusion_matrix, classification_report
 
 
 class GoftNet:
-
     _OPTIMIZERS = {
         'adam': Adam,
         'SGD': SGD,
@@ -147,7 +146,6 @@ class GoftNet:
 
         self._model.add(Dense(self._num_classes))
         if self._last_layer_activation is not None:
-
             # If last layer activation is None, loss wil be calculated directly on logits.
             self._model.add(Activation(self._last_layer_activation))
 
@@ -179,7 +177,7 @@ class GoftNet:
 
         self.plot_log(train_log=train_log, model_dir_path=self.model_dir_path)
 
-    def load_model(self,):
+    def load_model(self, ):
         self._model = load_model(self._model_path)
         self._compile()
 
@@ -198,11 +196,11 @@ class GoftNet:
 
         report = classification_report(y_test, y_pred)
 
-        print("\n===================================================")
-        print("============== CLASSIFICATION REPORT ==============")
-        print("===================================================")
-        print(report, '\n')
-        print(cm)
+        print(colored("\n===================================================", 'yellow'))
+        print(colored("============== CLASSIFICATION REPORT ==============", 'yellow'))
+        print(colored("===================================================", 'yellow'))
+        print(colored(report + '\n', 'yellow'))
+        print(colored(cm, 'yellow'))
 
     @staticmethod
     def plot_log(train_log, model_dir_path):
