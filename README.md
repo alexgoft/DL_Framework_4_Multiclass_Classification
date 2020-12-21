@@ -23,4 +23,4 @@
 - For some reason, it seems that the eval script is buggy. (sorry..)
 - "Hard coded" augmentation inside generator. Didn't have the chance to add code that toggle them via config file. (sorry..)
 - Reached in peak performance ~84% accuracy on validation data
-- Current arcitecture is "light weight VGG" with sigmoid as final activation and binary cross entropy as a loss function.
+- Current architecture is "light weight VGG" with sigmoid as final activation and binary cross entropy as a loss function.
