@@ -72,8 +72,14 @@ class DataGenerator(tf.keras.utils.Sequence):
             # If it's training examples, we shall combine both images to a single image.
             image = np.average(image, axis=0)
 
+            # Built in augmentations
+            # TODO To config.
+            # 1) Control alpha..
             alpha = random.uniform(0.3, 0.7)
             image = cv2.addWeighted(image[0], alpha, image[1], (1 - alpha), 0)
+
+            # 2) Random Patches
+            # image = self._random_eraser_aug(image)
 
         return image, label
 
