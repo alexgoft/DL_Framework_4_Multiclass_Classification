@@ -1,7 +1,7 @@
 # Multi-Label CIFAR10 Training/Evaluation Framework
 This is a __simple framework for building, training and evaluating DNNs__ for __multi-label classification problems with 
 ambiguity__, meaning it is not said what image is what class. For example: 
-Every training example consists of two images, and 
+
 ![alt text](data.png)
 
 Project was developed with Keras (TF v2 Backend).
